@@ -148,10 +148,13 @@
       <Project>{ad71c5fa-0997-42c9-8125-dafe27706919}</Project>
       <Name>RepairShopBusinessLogic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RepairShopListImplement\RepairShopListImplement.csproj">
-      <Project>{a625854d-4917-49c0-8174-f890d45561d9}</Project>
-      <Name>RepairShopListImplement</Name>
+    <ProjectReference Include="..\RepairShopFileImplement\RepairShopFileImplement.csproj">
+      <Project>{4aaadb59-03b4-4de1-b149-4b675339f7b1}</Project>
+      <Name>RepairShopFileImplement</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

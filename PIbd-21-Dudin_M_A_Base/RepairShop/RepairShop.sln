@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepairShopBusinessLogic", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepairShopListImplement", "RepairShopListImplement\RepairShopListImplement.csproj", "{A625854D-4917-49C0-8174-F890D45561D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepairShopFileImplement", "RepairShopFileImplement\RepairShopFileImplement.csproj", "{4AAADB59-03B4-4DE1-B149-4B675339F7B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A625854D-4917-49C0-8174-F890D45561D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A625854D-4917-49C0-8174-F890D45561D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A625854D-4917-49C0-8174-F890D45561D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AAADB59-03B4-4DE1-B149-4B675339F7B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AAADB59-03B4-4DE1-B149-4B675339F7B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AAADB59-03B4-4DE1-B149-4B675339F7B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AAADB59-03B4-4DE1-B149-4B675339F7B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
