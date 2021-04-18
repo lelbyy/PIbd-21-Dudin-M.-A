@@ -13,5 +13,6 @@ namespace RepairShopBusinessLogic.BindingModels
         public OrderStatus Status { get; set; }
         public DateTime DateCreate { get; set; }
         public DateTime? DateImplement { get; set; }
+
     }
 }
