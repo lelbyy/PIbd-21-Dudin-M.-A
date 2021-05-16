@@ -36,7 +36,7 @@ namespace RepairShopListImplement.Implements
             List<OrderViewModel> result = new List<OrderViewModel>();
             foreach (var order in source.Orders)
             {
-                if (order.RepairId == model.RepairId)
+                if (order.RepairId == model.RepairId && order.DateCreate >= model.DateFrom && order.DateCreate <= model.DateTo)
                 {
                     result.Add(CreateModel(order));
                 }

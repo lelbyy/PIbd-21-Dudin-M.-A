@@ -32,6 +32,8 @@ namespace RepairShopView
             currentContainer.RegisterType<OrderLogic>(new HierarchicalLifetimeManager());
             currentContainer.RegisterType<RepairLogic>(new
            HierarchicalLifetimeManager());
+	    currentContainer.RegisterType<ReportLogic>(new
+           HierarchicalLifetimeManager());
             return currentContainer;
         }
     }

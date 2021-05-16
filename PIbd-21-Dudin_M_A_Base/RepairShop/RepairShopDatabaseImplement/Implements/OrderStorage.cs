@@ -41,8 +41,7 @@ namespace RepairShopDatabaseImplement.Implements
             using (RepairShopDatabase context = new RepairShopDatabase())
             {
                 return context.Orders
-                .Where(rec => ( rec.DateCreate.Date == model.DateCreate.Date))
-                .Include(rec => rec.Repair)
+                .Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo)
                 .Select(rec => new OrderViewModel
                 {
                     Id = rec.Id,
