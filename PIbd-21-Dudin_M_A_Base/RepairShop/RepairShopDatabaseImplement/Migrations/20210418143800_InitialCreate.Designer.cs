@@ -10,7 +10,7 @@ using RepairShopDatabaseImplement;
 namespace RepairShopDatabaseImplement.Migrations
 {
     [DbContext(typeof(RepairShopDatabase))]
-    [Migration("20210418143800_InitialCreate")]
+    [Migration("202103941249318_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,29 @@ namespace RepairShopDatabaseImplement.Migrations
                 .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+	    modelBuilder.Entity("RepairShopDatabaseImplement.Models.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ClientFIO")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clients");
+                });
 
             modelBuilder.Entity("RepairShopDatabaseImplement.Models.Material", b =>
                 {
@@ -95,6 +118,9 @@ namespace RepairShopDatabaseImplement.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+ 		    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
@@ -108,6 +134,8 @@ namespace RepairShopDatabaseImplement.Migrations
 
                     b.HasIndex("MaterialId");
 
+		    b.HasIndex("ClientId");
+
                     b.HasIndex("RepairId");
 
                     b.ToTable("RepairMaterials");
@@ -118,6 +146,12 @@ namespace RepairShopDatabaseImplement.Migrations
                     b.HasOne("RepairShopDatabaseImplement.Models.Repair", "Repair")
                         .WithMany("Orders")
                         .HasForeignKey("RepairId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+ 		    b.HasOne("RepairShopDatabaseImplement.Models.Client", "Client")
+                        .WithMany("Orders")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

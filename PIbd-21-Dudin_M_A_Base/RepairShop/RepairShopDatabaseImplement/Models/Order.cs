@@ -10,6 +10,7 @@ namespace RepairShopDatabaseImplement.Models
     {
         public int Id { get; set; }
         public int RepairId { get; set; }
+	public int ClientId { get; set; }
         public virtual Repair Repair { get; set; }
         [Required]
         public int Count { get; set; }
@@ -20,5 +21,6 @@ namespace RepairShopDatabaseImplement.Models
         [Required]
         public DateTime DateCreate { get; set; }
         public DateTime? DateImplement { get; set; }
+	public virtual Client Client { get; set; }
     }
 }

@@ -33,10 +33,11 @@ namespace RepairShopFileImplement.Implements
             {
                 return null;
             }
-            return source.Orders
-            .Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo)
-             .Select(CreateModel)
-             .ToList();
+             return source.Orders.Where(rec => (!model.DateFrom.HasValue &&
+               !model.DateTo.HasValue && rec.DateCreate.Date == model.DateCreate.Date) ||
+               (model.DateFrom.HasValue && model.DateTo.HasValue && rec.DateCreate.Date >=
+               model.DateFrom.Value.Date && rec.DateCreate.Date <= model.DateTo.Value.Date) ||
+               (model.ClientId.HasValue && rec.ClientId == model.ClientId)).Select(CreateModel).ToList();
         }
 
         public OrderViewModel GetElement(OrderBindingModel model)
@@ -105,6 +106,7 @@ namespace RepairShopFileImplement.Implements
         private Order CreateModel(OrderBindingModel model, Order order)
         {
             order.RepairId = model.RepairId;
+	    order.ClientId = Convert.ToInt32(model.ClientId);
             order.RepairName = model.RepairName;
             order.Count = model.Count;
             order.Sum = model.Sum;
@@ -120,12 +122,15 @@ namespace RepairShopFileImplement.Implements
             {
                 Id = order.Id,
                 RepairId = order.RepairId,
+ 		ClientId = order.ClientId,
+                ClientFIO = source.Clients.FirstOrDefault(client => client.Id == order.ClientId)?.ClientFIO,
+                RepairName = source.Repairs.FirstOrDefault(gift => gift.Id == order.RepairId)?.RepairName,
                 RepairName = order.RepairName,
                 Count = order.Count,
                 Sum = order.Sum,
                 Status = order.Status,
                 DateCreate = order.DateCreate,
-                DateImplement = order.DateImplement
+                DateImplement = order?.DateImplement
             };
         }
     }

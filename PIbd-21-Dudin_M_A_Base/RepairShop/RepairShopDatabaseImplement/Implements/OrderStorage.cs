@@ -16,20 +16,9 @@ namespace RepairShopDatabaseImplement.Implements
         {
             using (RepairShopDatabase context = new RepairShopDatabase())
             {
-                return context.Orders
-                .Include(rec => rec.Repair)
-                .Select(rec => new OrderViewModel
-                {
-                    Id = rec.Id,
-                    RepairId = rec.RepairId,
-                    RepairName = rec.Repair.RepairName,
-                    Count = rec.Count,
-                    Sum = rec.Sum,
-                    Status = rec.Status,
-                    DateCreate = rec.DateCreate,
-                    DateImplement = rec.DateImplement,
-                })
-                .ToList();
+                return context.Orders.Include(rec => rec.Repair)
+                    .Include(rec => rec.Client)
+                    .Select(CreateModel).ToList();
             }
         }
         public List<OrderViewModel> GetFilteredList(OrderBindingModel model)
@@ -41,21 +30,17 @@ namespace RepairShopDatabaseImplement.Implements
             using (RepairShopDatabase context = new RepairShopDatabase())
             {
                 return context.Orders
-                .Where(rec => rec.DateCreate >= model.DateFrom && rec.DateCreate <= model.DateTo)
-                .Select(rec => new OrderViewModel
-                {
-                    Id = rec.Id,
-                    RepairId = rec.RepairId,
-                    RepairName = rec.Repair.RepairName,
-                    Count = rec.Count,
-                    Sum = rec.Sum,
-                    Status = rec.Status,
-                    DateCreate = rec.DateCreate,
-                    DateImplement = rec.DateImplement,
-                })
-                .ToList();
+                 .Include(rec => rec.Repair)
+                 .Include(rec => rec.Client)
+                 .Where(rec => (!model.DateFrom.HasValue &&
+                 !model.DateTo.HasValue && rec.DateCreate.Date == model.DateCreate.Date) ||
+                 (model.DateFrom.HasValue && model.DateTo.HasValue && rec.DateCreate.Date >=
+                 model.DateFrom.Value.Date && rec.DateCreate.Date <= model.DateTo.Value.Date) ||
+                 (model.ClientId.HasValue && rec.ClientId == model.ClientId))
+                 .Select(CreateModel).ToList();
             }
         }
+
         public OrderViewModel GetElement(OrderBindingModel model)
         {
             if (model == null)
@@ -65,20 +50,11 @@ namespace RepairShopDatabaseImplement.Implements
             using (RepairShopDatabase context = new RepairShopDatabase())
             {
                 Order order = context.Orders
+                .Include(rec => rec.Client)
                 .Include(rec => rec.Repair)
                 .FirstOrDefault(rec => rec.Id == model.Id);
                 return order != null ?
-                new OrderViewModel
-                {
-                    Id = order.Id,
-                    RepairId = order.RepairId,
-                    RepairName = order.Repair.RepairName,
-                    Count = order.Count,
-                    Sum = order.Sum,
-                    Status = order.Status,
-                    DateCreate = order.DateCreate,
-                    DateImplement = order.DateImplement,
-                } :
+                CreateModel(order) :
                 null;
             }
         }
@@ -130,31 +106,36 @@ namespace RepairShopDatabaseImplement.Implements
                 }
             }
         }
+
+	private OrderViewModel CreateModel(Order order)
+        {
+            return new OrderViewModel
+            {
+                Id = order.Id,
+                RepairId = order.RepairId,
+                ClientId = order.ClientId,
+                ClientFIO = order.Client.ClientFIO,
+                RepairName = order.Repair.RepairName,
+                Count = order.Count,
+                Sum = order.Sum,
+                Status = order.Status,
+                DateCreate = order.DateCreate,
+                DateImplement = order?.DateImplement
+
+            };
+        } 
+
         private Order CreateModel(OrderBindingModel model, Order order)
         {
-            if (model == null)
-            {
-                return null;
-            }
+            order.RepairId = model.RepairId;
+            order.Sum = model.Sum;
+            order.ClientId = model.ClientId.Value;
+            order.Count = model.Count;
+            order.Status = model.Status;
+            order.Sum = model.Sum;
+            order.DateCreate = model.DateCreate;
+            order.DateImplement = model.DateImplement;
 
-            using (RepairShopDatabase context = new RepairShopDatabase())
-            {
-                Repair element = context.Repairs.FirstOrDefault(rec => rec.Id == model.RepairId);
-                if (element != null)
-                {
-                    if (element.Orders == null)
-                    {
-                        element.Orders = new List<Order>();
-                    }
-                    element.Orders.Add(order);
-                    context.Repairs.Update(element);
-                    context.SaveChanges();
-                }
-                else
-                {
-                    throw new Exception("Элемент не найден");
-                }
-            }
             return order;
         }
     }

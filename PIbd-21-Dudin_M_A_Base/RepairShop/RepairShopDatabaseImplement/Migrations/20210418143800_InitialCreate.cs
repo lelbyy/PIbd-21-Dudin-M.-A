@@ -7,17 +7,19 @@ namespace RepairShopDatabaseImplement.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Materials",
+             migrationBuilder.CreateTable(
+                name: "Clients",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MaterialName = table.Column<string>(nullable: false)
+                    Email = table.Column<string>(nullable: false),
+                    Password = table.Column<string>(nullable: false),
+                    ClientFIO = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Materials", x => x.Id);
+                    table.PrimaryKey("PK_Clients", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,6 +43,7 @@ namespace RepairShopDatabaseImplement.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairId = table.Column<int>(nullable: false),
+ 		    ClientId = table.Column<int>(nullable: false),
                     Count = table.Column<int>(nullable: false),
                     Sum = table.Column<decimal>(nullable: false),
                     Status = table.Column<int>(nullable: false),
@@ -50,6 +53,12 @@ namespace RepairShopDatabaseImplement.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
+		    table.ForeignKey(
+                        name: "FK_Orders_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Orders_Repairs_RepairId",
                         column: x => x.RepairId,
@@ -90,6 +99,11 @@ namespace RepairShopDatabaseImplement.Migrations
                 table: "Orders",
                 column: "RepairId");
 
+		migrationBuilder.CreateIndex(
+                name: "IX_Orders_ClientId",
+                table: "Orders",
+                column: "ClientId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_RepairMaterials_MaterialId",
                 table: "RepairMaterials",
@@ -111,6 +125,9 @@ namespace RepairShopDatabaseImplement.Migrations
 
             migrationBuilder.DropTable(
                 name: "Materials");
+
+	    migrationBuilder.DropTable(
+                name: "Clients");
 
             migrationBuilder.DropTable(
                 name: "Repairs");

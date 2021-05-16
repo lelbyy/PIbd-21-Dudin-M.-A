@@ -26,11 +26,15 @@ namespace RepairShopView
             currentContainer.RegisterType<IOrderStorage, OrderStorage>(new
            HierarchicalLifetimeManager());
             currentContainer.RegisterType<IRepairStorage, RepairStorage>(new
+ 	   HierarchicalLifetimeManager());
+            currentContainer.RegisterType<IClientStorage, ClientStorage>(new
            HierarchicalLifetimeManager());
             currentContainer.RegisterType<MaterialLogic>(new
            HierarchicalLifetimeManager());
             currentContainer.RegisterType<OrderLogic>(new HierarchicalLifetimeManager());
             currentContainer.RegisterType<RepairLogic>(new
+ 	   HierarchicalLifetimeManager());
+            currentContainer.RegisterType<ClientLogic>(new
            HierarchicalLifetimeManager());
 	    currentContainer.RegisterType<ReportLogic>(new
            HierarchicalLifetimeManager());

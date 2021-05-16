@@ -38,7 +38,10 @@ namespace RepairShopListImplement.Implements
             {
                 if (order.RepairId == model.RepairId && order.DateCreate >= model.DateFrom && order.DateCreate <= model.DateTo)
                 {
-                    result.Add(CreateModel(order));
+                    if(order.ClientId == model.ClientId)
+                        {
+                            result.Add(CreateModel(order));
+                        }
                 }
             }
             return result;
@@ -121,11 +124,19 @@ namespace RepairShopListImplement.Implements
 
         private OrderViewModel CreateModel(Order order)
         {
+	    string repairName = null;
+            foreach(var repair in source.Repairs)
+            {
+                if (repair.Id == order.RepairId)
+                {
+                    repairName = repair.RepairName;
+                }
+            }
             return new OrderViewModel
             {
                 Id = order.Id,
                 RepairId = order.RepairId,
-                RepairName = order.RepairName,
+		RepairName = repairName,
                 Count = order.Count,
                 Sum = order.Sum,
                 Status = order.Status,
