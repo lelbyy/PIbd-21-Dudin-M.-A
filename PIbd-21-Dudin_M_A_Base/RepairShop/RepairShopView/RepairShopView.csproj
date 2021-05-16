@@ -290,7 +290,7 @@
     <None Include="Properties\DataSources\RepairShopBusinessLogic.BusinessLogics.RepairLogic.datasource" />
     <None Include="Properties\DataSources\RepairShopBusinessLogic.BusinessLogics.MaterialLogic.datasource" />
     <None Include="Properties\DataSources\RepairShopBusinessLogic.BusinessLogics.OrderLogic.datasource" />
-    <None Include="Properties\DataSources\RepairShopBusinessLogic.Interfaces.IGiftStorage.datasource" />
+    <None Include="Properties\DataSources\RepairShopBusinessLogic.Interfaces.IRepairStorage.datasource" />
     <None Include="Properties\DataSources\RepairShopBusinessLogic.Interfaces.IMaterialStorage.datasource" />
     <None Include="Properties\DataSources\RepairShopBusinessLogic.Interfaces.IOrderStorage.datasource" />
     <None Include="Properties\DataSources\RepairShopBusinessLogic.ViewModels.RepairViewModel.datasource" />
