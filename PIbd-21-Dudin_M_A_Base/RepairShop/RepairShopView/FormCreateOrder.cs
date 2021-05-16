@@ -14,11 +14,41 @@ namespace RepairShopView
         public new IUnityContainer Container { get; set; }
         private readonly RepairLogic _logicG;
         private readonly OrderLogic _logicO;
-        public FormCreateOrder(RepairLogic logicG, OrderLogic logicO)
+        private readonly ClientLogic _logicC;
+        public FormCreateOrder(RepairLogic logicG, OrderLogic logicO, ClientLogic logicC)
         {
             InitializeComponent();
             _logicG = logicG;
             _logicO = logicO;
+	    _logicG = logicG;
+        }
+
+	private void FormCreateOrder_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                List<RepairViewModel> listRepairs = _logicG.Read(null);
+                if (listRepairs != null)
+                {
+                    comboBoxRepair.DisplayMember = "RepairName";
+                    comboBoxRepair.ValueMember = "Id";
+                    comboBoxRepair.DataSource = listRepairs;
+                    comboBoxRepair.SelectedItem = null;
+                }
+                List<ClientViewModel> listClients = _logicC.Read(null);
+                if (listClients != null)
+                {
+                    comboBoxClient.DisplayMember = "ClientFIO";
+                    comboBoxClient.ValueMember = "Id";
+                    comboBoxClient.DataSource = listClients;
+                    comboBoxClient.SelectedItem = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
+               MessageBoxIcon.Error);
+            }
         }
 
         private void CalcSum()
@@ -42,26 +72,6 @@ namespace RepairShopView
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
                    MessageBoxIcon.Error);
                 }
-            }
-        }
-
-        private void FormCreateOrder_Load(object sender, EventArgs e)
-        {
-            try
-            {
-                List<RepairViewModel> list = _logicG.Read(null);
-                if (list != null)
-                {
-                    comboBoxRepair.DisplayMember = "RepairName";
-                    comboBoxRepair.ValueMember = "Id";
-                    comboBoxRepair.DataSource = list;
-                    comboBoxRepair.SelectedItem = null;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-               MessageBoxIcon.Error);
             }
         }
 
@@ -89,10 +99,17 @@ namespace RepairShopView
                MessageBoxIcon.Error);
                 return;
             }
+	    if (comboBoxClient.SelectedValue == null)
+            {
+                MessageBox.Show("Выберите клиента", "Ошибка", MessageBoxButtons.OK,
+               MessageBoxIcon.Error);
+                return;
+            }
             try
             {
                 _logicO.CreateOrder(new CreateOrderBindingModel
                 {
+		    ClientId = Convert.ToInt32(comboBoxClient.SelectedValue),
                     RepairName = comboBoxRepair.Text,
                     RepairId = Convert.ToInt32(comboBoxRepair.SelectedValue),
                     Count = Convert.ToInt32(textBoxCount.Text),

@@ -36,18 +36,15 @@ namespace RepairShopBusinessLogic.BusinessLogics
                 Sum = model.Sum,
                 DateCreate = DateTime.Now,
                 Status = OrderStatus.Принят
-            }); ;
+            }); 
         }
 
         public void TakeOrderInWork(ChangeStatusBindingModel model)
         {
-            var order = _orderStorage.GetElement(new OrderBindingModel
-            {
-                Id = model.OrderId
-            });
+           var order = _orderStorage.GetElement(new OrderBindingModel { Id = model.OrderId });
             if (order == null)
             {
-                throw new Exception("Не найден заказ");
+                throw new Exception("Заказ не найден");
             }
             if (order.Status != OrderStatus.Принят)
             {
@@ -57,23 +54,20 @@ namespace RepairShopBusinessLogic.BusinessLogics
             {
                 Id = order.Id,
                 RepairId = order.RepairId,
+ 		ClientId = order.ClientId,
                 RepairName = order.RepairName,
                 Count = order.Count,
                 Sum = order.Sum,
                 DateCreate = order.DateCreate,
-                DateImplement = DateTime.Now,
                 Status = OrderStatus.Выполняется
             });
         }
         public void FinishOrder(ChangeStatusBindingModel model)
         {
-            var order = _orderStorage.GetElement(new OrderBindingModel
-            {
-                Id = model.OrderId
-            });
+	    var order = _orderStorage.GetElement(new OrderBindingModel { Id = model.OrderId });
             if (order == null)
             {
-                throw new Exception("Не найден заказ");
+                throw new Exception("Заказ не найден");
             }
             if (order.Status != OrderStatus.Выполняется)
             {
@@ -83,23 +77,21 @@ namespace RepairShopBusinessLogic.BusinessLogics
             {
                 Id = order.Id,
                 RepairId = order.RepairId,
+		ClientId = order.ClientId,
                 RepairName = order.RepairName,
                 Count = order.Count,
                 Sum = order.Sum,
                 DateCreate = order.DateCreate,
-                DateImplement = order.DateImplement,
+                DateImplement = DateTime.Now,
                 Status = OrderStatus.Готов
             });
         }
         public void PayOrder(ChangeStatusBindingModel model)
         {
-            var order = _orderStorage.GetElement(new OrderBindingModel
-            {
-                Id = model.OrderId
-            });
+            var order = _orderStorage.GetElement(new OrderBindingModel { Id = model.OrderId });
             if (order == null)
             {
-                throw new Exception("Не найден заказ");
+                throw new Exception("Заказ не найден");
             }
             if (order.Status != OrderStatus.Готов)
             {
@@ -109,6 +101,7 @@ namespace RepairShopBusinessLogic.BusinessLogics
             {
                 Id = order.Id,
                 RepairId = order.RepairId,
+		ClientId = order.ClientId,
                 RepairName = order.RepairName,
                 Count = order.Count,
                 Sum = order.Sum,

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using RepairShopBusinessLogic.BindingModels;
+﻿using RepairShopBusinessLogic.BindingModels;
 using RepairShopBusinessLogic.BusinessLogics;
 using System;
 using System.Windows.Forms;
@@ -13,14 +11,13 @@ namespace RepairShopView
         [Dependency]
         public new IUnityContainer Container { get; set; }
         private readonly OrderLogic _orderLogic;
-        private readonly RepairLogic _repairLogic;
         private readonly ReportLogic _reportLogic;
-        public FormMain(OrderLogic orderLogic, RepairLogic repairLogic, ReportLogic reportLogic)
+        public FormMain(OrderLogic orderLogic, ReportLogic reportLogic)
         {
             InitializeComponent();
             this._orderLogic = orderLogic;
-            this._repairLogic = repairLogic;
             this._reportLogic = reportLogic;
+	    LoadData();
         }
 
         private void LoadData()
@@ -33,6 +30,7 @@ namespace RepairShopView
                     dataGridView.DataSource = list;
                     dataGridView.Columns[0].Visible = false;
                     dataGridView.Columns[1].Visible = false;
+		    dataGridView.Columns[2].Visible = false;
                 }
             }
             catch (Exception ex)
@@ -40,11 +38,6 @@ namespace RepairShopView
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
                MessageBoxIcon.Error);
             }
-        }
-
-        private void FormMain_Load(object sender, EventArgs e)
-        {
-            LoadData();
         }
 
         private void buttonCreateOrder_Click(object sender, EventArgs e)
@@ -152,6 +145,11 @@ namespace RepairShopView
         private void списокЗаказовToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var form = Container.Resolve<FormReportOrders>();
+            form.ShowDialog();
+        }
+ 	private void клиентыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormClients>();
             form.ShowDialog();
         }
     }
