@@ -6,7 +6,7 @@ using Unity;
 
 namespace RepairShopView
 {
-    public partial class FormReportGiftMaterials : Form
+    public partial class FormReportRepairMaterials : Form
     {
         [Dependency]
         public new IUnityContainer Container { get; set; }
