@@ -78,6 +78,9 @@ namespace RepairShopDatabaseImplement.Migrations
                     b.Property<int>("RepairId")
                         .HasColumnType("int");
 
+		    b.Property<int?>("ImplementerId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -87,6 +90,8 @@ namespace RepairShopDatabaseImplement.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RepairId");
+
+		    b.HasIndex("ImplementerId");
 
                     b.ToTable("Orders");
                 });
@@ -140,13 +145,34 @@ namespace RepairShopDatabaseImplement.Migrations
                     b.ToTable("RepairMaterials");
                 });
 
+	   modelBuilder.Entity("RepairShopDatabaseImplement.Models.Implementer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PauseTime")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkingTime")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Implementers");
+                });
+
+
             modelBuilder.Entity("RepairShopDatabaseImplement.Models.Order", b =>
                 {
  		    b.HasOne("RepairShopDatabaseImplement.Models.Client", "Client")
                         .WithMany("Orders")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClientId");
 
                     b.HasOne("RepairShopDatabaseImplement.Models.Repair", "Repair")
                         .WithMany("Orders")
@@ -168,6 +194,10 @@ namespace RepairShopDatabaseImplement.Migrations
                         .HasForeignKey("RepairId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+		    b.HasOne("RepairShopDatabaseImplement.Models.Implementer", "Implementer")
+                        .WithMany("Orders")
+                        .HasForeignKey("ImplementerId");
                 });
 #pragma warning restore 612, 618
         }

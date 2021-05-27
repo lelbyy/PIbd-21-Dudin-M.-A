@@ -22,6 +22,21 @@ namespace RepairShopDatabaseImplement.Migrations
                     table.PrimaryKey("PK_Clients", x => x.Id);
                 });
 
+		 migrationBuilder.CreateTable(
+                name: "Implementers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: false),
+                    WorkingTime = table.Column<int>(nullable: false),
+                    PauseTime = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Implementers", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Repairs",
                 columns: table => new
@@ -43,7 +58,8 @@ namespace RepairShopDatabaseImplement.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     RepairId = table.Column<int>(nullable: false),
- 		    ClientId = table.Column<int>(nullable: false),
+ 		     ClientId = table.Column<int>(nullable: true),
+                    ImplementerId = table.Column<int>(nullable: true),
                     Count = table.Column<int>(nullable: false),
                     Sum = table.Column<decimal>(nullable: false),
                     Status = table.Column<int>(nullable: false),
@@ -58,13 +74,19 @@ namespace RepairShopDatabaseImplement.Migrations
                         column: x => x.ClientId,
                         principalTable: "Clients",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Orders_Repairs_RepairId",
                         column: x => x.RepairId,
                         principalTable: "Repairs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+		    table.ForeignKey(
+                        name: "FK_Orders_Implementers_ImplementerId",
+                        column: x => x.ImplementerId,
+                        principalTable: "Implementers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -112,7 +134,12 @@ namespace RepairShopDatabaseImplement.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_RepairMaterials_RepairId",
                 table: "RepairMaterials",
-                column: "RepairId");
+                column: "RepairId");	
+
+	    migrationBuilder.CreateIndex(
+                name: "IX_Orders_ImplementerId",
+                table: "Orders",
+                column: "ImplementerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -131,6 +158,9 @@ namespace RepairShopDatabaseImplement.Migrations
 
             migrationBuilder.DropTable(
                 name: "Repairs");
+	 
+	    migrationBuilder.DropTable(
+                name: "Implementers");
         }
     }
 }

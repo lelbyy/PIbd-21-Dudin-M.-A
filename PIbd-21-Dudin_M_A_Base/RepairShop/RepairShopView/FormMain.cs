@@ -10,13 +10,15 @@ namespace RepairShopView
     {
         [Dependency]
         public new IUnityContainer Container { get; set; }
-        private readonly OrderLogic _orderLogic;
-        private readonly ReportLogic _reportLogic;
-        public FormMain(OrderLogic orderLogic, ReportLogic reportLogic)
+        private readonly OrderLogic orderLogic;
+        private readonly ReportLogic reportLogic;
+        private readonly WorkModeling workModeling;
+        public FormMain(OrderLogic orderLogic, ReportLogic reportLogic, WorkModeling workModeling)
         {
             InitializeComponent();
-            this._orderLogic = orderLogic;
-            this._reportLogic = reportLogic;
+            this.orderLogic = orderLogic;
+            this.reportLogic = reportLogic;
+            this.workModeling = workModeling;
 	    LoadData();
         }
 
@@ -24,13 +26,14 @@ namespace RepairShopView
         {
             try
             {
-                var list = _orderLogic.Read(null);
+                var list = orderLogic.Read(null);
                 if (list != null)
                 {
                     dataGridView.DataSource = list;
                     dataGridView.Columns[0].Visible = false;
                     dataGridView.Columns[1].Visible = false;
 		    dataGridView.Columns[2].Visible = false;
+		    dataGridView.Columns[3].Visible = false;
                 }
             }
             catch (Exception ex)
@@ -47,45 +50,6 @@ namespace RepairShopView
             LoadData();
         }
 
-        private void buttonnTakeOrderInWork_Click(object sender, EventArgs e)
-        {
-            if (dataGridView.SelectedRows.Count == 1)
-            {
-                int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
-                try
-                {
-                    _orderLogic.TakeOrderInWork(new ChangeStatusBindingModel { OrderId = id });
-                    LoadData();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void buttonOrderReady_Click(object sender, EventArgs e)
-        {
-            if (dataGridView.SelectedRows.Count == 1)
-            {
-                int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
-                try
-                {
-                    _orderLogic.FinishOrder(new ChangeStatusBindingModel
-                    {
-                        OrderId = id
-                    });
-                    LoadData();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
-                }
-            }
-        }
-
         private void buttonPayOrder_Click(object sender, EventArgs e)
         {
             if (dataGridView.SelectedRows.Count == 1)
@@ -93,7 +57,7 @@ namespace RepairShopView
                 int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                 try
                 {
-                    _orderLogic.PayOrder(new ChangeStatusBindingModel { OrderId = id });
+                    orderLogic.PayOrder(new ChangeStatusBindingModel { OrderId = id });
                     LoadData();
                 }
                 catch (Exception ex)
@@ -126,7 +90,7 @@ namespace RepairShopView
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    _reportLogic.SaveMaterialsToWordFile(new ReportBindingModel
+                    reportLogic.SaveMaterialsToWordFile(new ReportBindingModel
                     {
                         FileName = dialog.FileName
                     });
@@ -150,6 +114,18 @@ namespace RepairShopView
  	private void клиентыToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var form = Container.Resolve<FormClients>();
+            form.ShowDialog();
+        }
+
+	private void запускРаботToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            workModeling.DoWork();
+            LoadData();
+        }
+
+        private void исполнителиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = Container.Resolve<FormImplementers>();
             form.ShowDialog();
         }
     }

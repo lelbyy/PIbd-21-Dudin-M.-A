@@ -16,6 +16,8 @@ namespace RepairShopBusinessLogic.ViewModels
         public int RepairId { get; set; }
         [DisplayName("Изделие")]
         [DataMember]
+	public int? ImplementerId { get; set; }
+        [DataMember]
         [DisplayName("Клиент")]
         public string ClientFIO { get; set; }
         [DataMember]
@@ -36,5 +38,8 @@ namespace RepairShopBusinessLogic.ViewModels
         [DataMember]
         [DisplayName("Дата выполнения")]
         public DateTime? DateImplement { get; set; }
+	[DataMember]
+        [DisplayName("Исполнитель")]
+        public string ImplementerName { get; set; }
     }
 }
