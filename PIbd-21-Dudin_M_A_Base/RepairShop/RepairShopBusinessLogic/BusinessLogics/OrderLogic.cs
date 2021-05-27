@@ -10,6 +10,8 @@ namespace RepairShopBusinessLogic.BusinessLogics
     public class OrderLogic
     {
         private readonly IOrderStorage _orderStorage;
+	private readonly object locker = new object(); 
+
         public OrderLogic(IOrderStorage orderStorage)
         {
             _orderStorage = orderStorage;
@@ -41,26 +43,36 @@ namespace RepairShopBusinessLogic.BusinessLogics
 
         public void TakeOrderInWork(ChangeStatusBindingModel model)
         {
-           var order = _orderStorage.GetElement(new OrderBindingModel { Id = model.OrderId });
-            if (order == null)
+            lock (locker)
             {
-                throw new Exception("Заказ не найден");
-            }
-            if (order.Status != OrderStatus.Принят)
-            {
-                throw new Exception("Заказ не в статусе \"Принят\"");
-            }
-            _orderStorage.Update(new OrderBindingModel
-            {
-                Id = order.Id,
-                RepairId = order.RepairId,
- 		ClientId = order.ClientId,
-                RepairName = order.RepairName,
-                Count = order.Count,
-                Sum = order.Sum,
-                DateCreate = order.DateCreate,
-                Status = OrderStatus.Выполняется
-            });
+                var order = _orderStorage.GetElement(new OrderBindingModel
+                {
+                    Id = model.OrderId
+                });
+                if (order == null)
+                {
+                    throw new Exception("Не найден заказ");
+                }
+                if (order.Status != OrderStatus.Принят)
+                {
+                    throw new Exception("Заказ не в статусе \"Принят\"");
+                }
+                if (order.ImplementerId.HasValue)
+                {
+                    throw new Exception("У заказа уже есть исполнитель");
+                }
+                _orderStorage.Update(new OrderBindingModel
+                {
+                    Id = order.Id,
+                    GiftId = order.GiftId,
+                    ClientId = order.ClientId,
+                    ImplementerId = model.ImplementerId,
+                    Count = order.Count,
+                    Sum = order.Sum,
+                    DateCreate = order.DateCreate,
+                    Status = OrderStatus.Выполняется
+                });
+            }          
         }
         public void FinishOrder(ChangeStatusBindingModel model)
         {
@@ -78,6 +90,7 @@ namespace RepairShopBusinessLogic.BusinessLogics
                 Id = order.Id,
                 RepairId = order.RepairId,
 		ClientId = order.ClientId,
+		ImplementerId = order.ImplementerId,
                 RepairName = order.RepairName,
                 Count = order.Count,
                 Sum = order.Sum,
@@ -102,6 +115,7 @@ namespace RepairShopBusinessLogic.BusinessLogics
                 Id = order.Id,
                 RepairId = order.RepairId,
 		ClientId = order.ClientId,
+		ImplementerId = order.ImplementerId,
                 RepairName = order.RepairName,
                 Count = order.Count,
                 Sum = order.Sum,

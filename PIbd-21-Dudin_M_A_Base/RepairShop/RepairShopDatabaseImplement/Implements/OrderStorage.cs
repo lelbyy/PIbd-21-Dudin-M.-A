@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using RepairShopBusinessLogic.BindingModels;
+using RepairShopBusinessLogic.Enums;
 using RepairShopBusinessLogic.Interfaces;
 using RepairShopBusinessLogic.ViewModels;
 using RepairShopDatabaseImplement.Models;
@@ -16,8 +17,10 @@ namespace RepairShopDatabaseImplement.Implements
         {
             using (RepairShopDatabase context = new RepairShopDatabase())
             {
-                return context.Orders.Include(rec => rec.Repair)
+                  return context.Orders
+                    .Include(rec => rec.Repair)
                     .Include(rec => rec.Client)
+		    .Include(rec => rec.Implementer)
                     .Select(CreateModel).ToList();
             }
         }
@@ -32,11 +35,17 @@ namespace RepairShopDatabaseImplement.Implements
                 return context.Orders
                  .Include(rec => rec.Repair)
                  .Include(rec => rec.Client)
-                 .Where(rec => (!model.DateFrom.HasValue &&
-                 !model.DateTo.HasValue && rec.DateCreate.Date == model.DateCreate.Date) ||
-                 (model.DateFrom.HasValue && model.DateTo.HasValue && rec.DateCreate.Date >=
-                 model.DateFrom.Value.Date && rec.DateCreate.Date <= model.DateTo.Value.Date) ||
-                 (model.ClientId.HasValue && rec.ClientId == model.ClientId))
+                 .Include(rec => rec.Implementer)
+                    .Where(rec => (!model.DateFrom.HasValue && !model.DateTo.HasValue &&
+                    rec.DateCreate.Date == model.DateCreate.Date) ||
+                     (model.DateFrom.HasValue && model.DateTo.HasValue &&
+                    rec.DateCreate.Date >= model.DateFrom.Value.Date && rec.DateCreate.Date <=
+                    model.DateTo.Value.Date) ||
+                     (model.ClientId.HasValue && rec.ClientId == model.ClientId) ||
+                    (model.FreeOrders.HasValue && model.FreeOrders.Value && rec.Status ==
+                    OrderStatus.Принят) ||
+                     (model.ImplementerId.HasValue && rec.ImplementerId ==
+                    model.ImplementerId && rec.Status == OrderStatus.Выполняется))
                  .Select(CreateModel).ToList();
             }
         }
@@ -50,8 +59,9 @@ namespace RepairShopDatabaseImplement.Implements
             using (RepairShopDatabase context = new RepairShopDatabase())
             {
                 Order order = context.Orders
-                .Include(rec => rec.Client)
                 .Include(rec => rec.Repair)
+		.Include(rec => rec.Client)
+                .Include(rec => rec.Implementer)
                 .FirstOrDefault(rec => rec.Id == model.Id);
                 return order != null ?
                 CreateModel(order) :
@@ -113,14 +123,17 @@ namespace RepairShopDatabaseImplement.Implements
             {
                 Id = order.Id,
                 RepairId = order.RepairId,
-                ClientId = order.ClientId,
+                ClientId = order.ClientId.Value,
+                ImplementerId = order.ImplementerId,
                 ClientFIO = order.Client.ClientFIO,
                 RepairName = order.Repair.RepairName,
                 Count = order.Count,
                 Sum = order.Sum,
                 Status = order.Status,
                 DateCreate = order.DateCreate,
-                DateImplement = order?.DateImplement
+                DateImplement = order?.DateImplement,
+                ImplementerName = order.ImplementerId.HasValue ?
+                    order.Implementer.Name : string.Empty
 
             };
         } 
@@ -130,6 +143,7 @@ namespace RepairShopDatabaseImplement.Implements
             order.RepairId = model.RepairId;
             order.Sum = model.Sum;
             order.ClientId = model.ClientId.Value;
+	    order.ImplementerId = model.ImplementerId;
             order.Count = model.Count;
             order.Status = model.Status;
             order.Sum = model.Sum;

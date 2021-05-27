@@ -82,10 +82,5 @@ namespace RepairShopView
                 }
             }
         }
-
-        private void FormReportOrders_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

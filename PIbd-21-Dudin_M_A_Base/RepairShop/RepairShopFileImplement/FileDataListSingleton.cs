@@ -19,17 +19,20 @@ namespace RepairShopFileImplement.Models
 		private readonly string RepairFileName = "Repair.xml";
 		private readonly string ClientFileName = "Client.xml";
 
+		private readonly string ImplementerFileName = "Implementer.xml";
 		public List<Material> Materials { get; set; }
 		public List<Order> Orders { get; set; }
 		public List<Repair> Repairs { get; set; }
 		public List<Client> Clients { get; set; }
 
+		public List<Implementer> Implementers { get; set; }
 		private FileDataListSingleton()
 		{
 			Materials = LoadMaterials();
 			Orders = LoadOrders();
 			Repairs = LoadRepairs();
 			Clients = LoadClients();
+			Implementers = LoadImplementers();
 		}
 
 		public static FileDataListSingleton GetInstance()
@@ -46,6 +49,8 @@ namespace RepairShopFileImplement.Models
 			SaveMaterials();
 			SaveOrders();
 			SaveRepairs();
+			SaveClients();
+			SaveImplementers();
 		}
 
 		private List<Material> LoadMaterials()
@@ -119,8 +124,11 @@ namespace RepairShopFileImplement.Models
 							DateCreate = Convert.ToDateTime(elem.Element("DateCreate").Value),
 							DateImplement = Convert.ToDateTime(elem.Element("DateImplement").Value)
 						});
-					}
-						
+					}	
+				if (!string.IsNullOrEmpty(elem.Element("ImplementerId").Value))
+					{
+						order.ImplementerId = Convert.ToInt32(elem.Element("ImplementerId").Value);
+					}					
 				}
 			}
 			return list;
@@ -148,6 +156,27 @@ namespace RepairShopFileImplement.Models
 						RepairName = elem.Element("RepairName").Value,
 						Price = Convert.ToDecimal(elem.Element("Price").Value),
 						RepairMaterials = repairMaterials
+					});
+				}
+			}
+			return list;
+		}
+
+		private List<Implementer> LoadImplementers()
+		{
+			var list = new List<Implementer>();
+			if (File.Exists(ImplementerFileName))
+			{
+				XDocument xDocument = XDocument.Load(ImplementerFileName);
+				var xElements = xDocument.Root.Elements("Implementers").ToList();
+				foreach (var elem in xElements)
+				{
+					list.Add(new Implementer
+					{
+						Id = Convert.ToInt32(elem.Attribute("Id").Value),
+						Name = elem.Element("Name").Value,
+						WorkingTime = Convert.ToInt32(elem.Element("WorkingTime").Value),
+						PauseTime = Convert.ToInt32(elem.Element("PauseTime").Value)
 					});
 				}
 			}
@@ -253,6 +282,23 @@ namespace RepairShopFileImplement.Models
 				}
 				XDocument xDocument = new XDocument(xElement);
 				xDocument.Save(ClientFileName);
+			}
+		}
+		private void SaveImplementers()
+		{
+			if (Implementers != null)
+			{
+				var xElement = new XElement("Implementers");
+				foreach (var client in Implementers)
+				{
+					xElement.Add(new XElement("Implementer",
+					new XAttribute("Id", client.Id),
+					new XElement("Name", client.Name),
+					new XElement("WorkingTime", client.WorkingTime),
+					new XElement("PauseTime", client.PauseTime)));
+				}
+				XDocument xDocument = new XDocument(xElement);
+				xDocument.Save(ImplementerFileName);
 			}
 		}
 

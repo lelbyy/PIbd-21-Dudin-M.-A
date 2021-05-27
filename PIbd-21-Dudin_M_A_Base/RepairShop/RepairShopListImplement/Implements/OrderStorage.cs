@@ -1,6 +1,7 @@
 ﻿using RepairShopBusinessLogic.BindingModels;
 using RepairShopBusinessLogic.Interfaces;
 using RepairShopBusinessLogic.ViewModels;
+using RepairShopBusinessLogic.Enums;
 using RepairShopListImplement.Models;
 using System;
 using System.Collections.Generic;
@@ -36,12 +37,13 @@ namespace RepairShopListImplement.Implements
             List<OrderViewModel> result = new List<OrderViewModel>();
             foreach (var order in source.Orders)
             {
-                if (order.RepairId == model.RepairId && order.DateCreate >= model.DateFrom && order.DateCreate <= model.DateTo)
+               if ((!model.DateFrom.HasValue && !model.DateTo.HasValue && order.DateCreate.Date == model.DateCreate.Date) ||
+                (model.DateFrom.HasValue && model.DateTo.HasValue && order.DateCreate.Date >= model.DateFrom.Value.Date && order.DateCreate.Date <= model.DateTo.Value.Date) ||
+                (model.ClientId.HasValue && order.ClientId == model.ClientId) ||
+                (model.FreeOrders.HasValue && model.FreeOrders.Value && order.Status == OrderStatus.Принят) ||
+                (model.ImplementerId.HasValue && order.ImplementerId == model.ImplementerId && order.Status == OrderStatus.Выполняется))
                 {
-                    if(order.ClientId == model.ClientId)
-                        {
-                            result.Add(CreateModel(order));
-                        }
+                    result.Add(CreateModel(order));
                 }
             }
             return result;
@@ -113,7 +115,9 @@ namespace RepairShopListImplement.Implements
         private Order CreateModel(OrderBindingModel model, Order order)
         {
             order.RepairId = model.RepairId;
-            order.RepairName = model.RepairName;
+	    order.RepairName = model.RepairName;
+	    order.ClientId = model.ClientId;
+            order.ImplementerId = model.ImplementerId;
             order.Count = model.Count;
             order.Sum = model.Sum;
             order.Status = model.Status;
@@ -125,11 +129,27 @@ namespace RepairShopListImplement.Implements
         private OrderViewModel CreateModel(Order order)
         {
 	    string repairName = null;
-            foreach(var repair in source.Repairs)
+            foreach (var repair in source.Repairs)
             {
                 if (repair.Id == order.RepairId)
                 {
                     repairName = repair.RepairName;
+                }
+            }
+	    string clientFIO = null;
+            foreach (var client in source.Clients)
+            {
+                if (client.Id == order.ClientId)
+                {
+                    clientFIO = client.ClientFIO;
+                }
+            }
+            string implementerName = null;
+            foreach (var implementer in source.Implementers)
+            {
+                if (implementer.Id == order.ImplementerId)
+                {
+                    implementerName = implementer.Name;
                 }
             }
             return new OrderViewModel
@@ -137,6 +157,10 @@ namespace RepairShopListImplement.Implements
                 Id = order.Id,
                 RepairId = order.RepairId,
 		RepairName = repairName,
+		ClientId = order.ClientId.Value,
+                ClientFIO = clientFIO,
+                ImplementerId = order.ImplementerId.Value,
+                ImplementerName = implementerName,
                 Count = order.Count,
                 Sum = order.Sum,
                 Status = order.Status,

@@ -10,7 +10,7 @@ using RepairShopDatabaseImplement;
 namespace RepairShopDatabaseImplement.Migrations
 {
     [DbContext(typeof(RepairShopDatabase))]
-    [Migration("202103941249318_InitialCreate")]
+    [Migration("2021018181606_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -141,6 +141,28 @@ namespace RepairShopDatabaseImplement.Migrations
                     b.ToTable("RepairMaterials");
                 });
 
+	     modelBuilder.Entity("RepairShopDatabaseImplement.Models.Implementer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PauseTime")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkingTime")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Implementers");
+                });
+
             modelBuilder.Entity("RepairShopDatabaseImplement.Models.Order", b =>
                 {
                     b.HasOne("RepairShopDatabaseImplement.Models.Repair", "Repair")
@@ -154,6 +176,15 @@ namespace RepairShopDatabaseImplement.Migrations
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+		    b.HasOne("RepairShopDatabaseImplement.Models.Implementer", "Implementer")
+                        .WithMany("Orders")
+                        .HasForeignKey("ImplementerId");
+
+		    b.Property<int?>("ImplementerId")
+                        .HasColumnType("int");
+
+		    b.HasIndex("ImplementerId");
                 });
 
             modelBuilder.Entity("RepairShopDatabaseImplement.Models.RepairMaterial", b =>

@@ -65,7 +65,8 @@ namespace RepairShopDatabaseImplement.Implements
         {
             using (var context = new RepairShopDatabase())
             {
-                context.Materials.Add(CreateModel(model, new Material()));
+                Material mat = CreateModel(model, new Material());
+                context.Materials.Add(mat);
                 context.SaveChanges();
             }
         }
