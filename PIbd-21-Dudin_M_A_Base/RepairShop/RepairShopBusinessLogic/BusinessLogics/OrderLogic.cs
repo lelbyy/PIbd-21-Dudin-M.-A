@@ -64,7 +64,7 @@ namespace RepairShopBusinessLogic.BusinessLogics
                 _orderStorage.Update(new OrderBindingModel
                 {
                     Id = order.Id,
-                    GiftId = order.GiftId,
+                    RepairId = order.RepairId,
                     ClientId = order.ClientId,
                     ImplementerId = model.ImplementerId,
                     Count = order.Count,
