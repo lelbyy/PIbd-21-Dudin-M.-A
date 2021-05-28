@@ -51,6 +51,28 @@ namespace RepairShopDatabaseImplement.Migrations
                     table.PrimaryKey("PK_Repairs", x => x.Id);
                 });
 
+	    migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    MessageId = table.Column<string>(nullable: false),
+                    ClientId = table.Column<int>(nullable: true),
+                    SenderName = table.Column<string>(nullable: true),
+                    DateDelivery = table.Column<DateTime>(nullable: false),
+                    Subject = table.Column<string>(nullable: true),
+                    Body = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.MessageId);
+                    table.ForeignKey(
+                        name: "FK_Messages_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
@@ -140,6 +162,11 @@ namespace RepairShopDatabaseImplement.Migrations
                 name: "IX_Orders_ImplementerId",
                 table: "Orders",
                 column: "ImplementerId");
+
+	    migrationBuilder.CreateIndex(
+                name: "IX_Messages_ClientId",
+                table: "Messages",
+                column: "ClientId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -161,6 +188,10 @@ namespace RepairShopDatabaseImplement.Migrations
 	 
 	    migrationBuilder.DropTable(
                 name: "Implementers");
+
+	    migrationBuilder.DropTable(
+                name: "Messages");
+
         }
     }
 }

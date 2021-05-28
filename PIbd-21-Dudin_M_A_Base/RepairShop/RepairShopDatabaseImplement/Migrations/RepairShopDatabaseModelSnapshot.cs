@@ -167,6 +167,32 @@ namespace RepairShopDatabaseImplement.Migrations
                     b.ToTable("Implementers");
                 });
 
+	   modelBuilder.Entity("RepairShopDatabaseImplement.Models.MessageInfo", b =>
+                {
+                    b.Property<string>("MessageId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateDelivery")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SenderName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("Messages");
+                });
 
             modelBuilder.Entity("RepairShopDatabaseImplement.Models.Order", b =>
                 {
@@ -179,6 +205,13 @@ namespace RepairShopDatabaseImplement.Migrations
                         .HasForeignKey("RepairId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+	    modelBuilder.Entity("RepairShopDatabaseImplement.Models.MessageInfo", b =>
+                {
+                    b.HasOne("RepairShopDatabaseImplement.Models.Client", "Client")
+                        .WithMany("Messages")
+                        .HasForeignKey("ClientId");
                 });
 
             modelBuilder.Entity("RepairShopDatabaseImplement.Models.RepairMaterial", b =>
