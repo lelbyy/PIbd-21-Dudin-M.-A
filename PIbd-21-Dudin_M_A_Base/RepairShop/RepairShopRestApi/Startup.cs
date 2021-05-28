@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using RepairShopBusinessLogic.HelperModels;
+using System.Threading;
 
 namespace RepairShopRestApi
 {
@@ -25,11 +26,18 @@ namespace RepairShopRestApi
             services.AddTransient<IClientStorage, ClientStorage>();
             services.AddTransient<IOrderStorage, OrderStorage>();
             services.AddTransient<IRepairStorage, RepairStorage>();
+	    services.AddTransient<IMessageInfoStorage, MessageInfoStorage>();
             services.AddTransient<OrderLogic>();
             services.AddTransient<ClientLogic>();
             services.AddTransient<RepairLogic>();
             services.AddControllers().AddNewtonsoftJson();
-
+	    MailLogic.MailConfig(new MailConfig
+            {
+                SmtpClientHost = "smtp.gmail.com",
+                SmtpClientPort = 587,
+                MailLogin = "marat73rus1@gmail.com",
+                MailPassword = "gntyxbr73"
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
