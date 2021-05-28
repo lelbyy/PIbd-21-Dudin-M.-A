@@ -13,12 +13,14 @@ namespace RepairShopView
         private readonly OrderLogic orderLogic;
         private readonly ReportLogic reportLogic;
         private readonly WorkModeling workModeling;
-        public FormMain(OrderLogic orderLogic, ReportLogic reportLogic, WorkModeling workModeling)
+        private readonly RepairShopBackUpAbstractLogic backUpAbstractLogic;
+        public FormMain(OrderLogic orderLogic, ReportLogic reportLogic, WorkModeling workModeling, RepairShopBackUpAbstractLogic backUpAbstractLogic)
         {
             InitializeComponent();
             this.orderLogic = orderLogic;
             this.reportLogic = reportLogic;
             this.workModeling = workModeling;
+	    this.backUpAbstractLogic = backUpAbstractLogic;
 	    LoadData();
         }
 
@@ -26,15 +28,7 @@ namespace RepairShopView
         {
             try
             {
-                var list = orderLogic.Read(null);
-                if (list != null)
-                {
-                    dataGridView.DataSource = list;
-                    dataGridView.Columns[0].Visible = false;
-                    dataGridView.Columns[1].Visible = false;
-		    dataGridView.Columns[2].Visible = false;
-		    dataGridView.Columns[3].Visible = false;
-                }
+                Program.ConfigGrid(orderLogic.Read(null), dataGridView);
             }
             catch (Exception ex)
             {
@@ -133,6 +127,28 @@ namespace RepairShopView
         {
             var form = Container.Resolve<FormMessages>();
             form.ShowDialog();
+        }
+	
+	private void создатьБекапToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (backUpAbstractLogic != null)
+                {
+                    var fbd = new FolderBrowserDialog();
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                    {
+                        backUpAbstractLogic.CreateArchive(fbd.SelectedPath);
+                        MessageBox.Show("Бекап создан", "Сообщение",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
+               MessageBoxIcon.Error);
+            }
         }
     }
 }
